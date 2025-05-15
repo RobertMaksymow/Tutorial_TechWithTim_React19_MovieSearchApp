@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../css/Home.css";
 import MovieCard from "../components/MovieCard";
 
 const Home = () => {
