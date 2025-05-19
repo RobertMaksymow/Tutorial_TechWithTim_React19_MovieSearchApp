@@ -1,35 +1,80 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../css/Home.css";
+import { getPopularMovies, searchMovies } from "../services/api";
 import MovieCard from "../components/MovieCard";
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const movies = [
-    {
-      id: 1,
-      title: "John 1",
-      release_date: "2023-01-01",
-      url: "https://example.com/movie1.jpg",
-    },
-    {
-      id: 2,
-      title: "Movie 2",
-      release_date: "2023-02-01",
-      url: "https://example.com/movie2.jpg",
-    },
-    {
-      id: 3,
-      title: "Movie 3",
-      release_date: "2023-03-01",
-      url: "https://example.com/movie3.jpg",
-    },
-  ];
+  // const apiKey = import.meta.env.VITE_API_KEY;
+  // const apiUrl = import.meta.env.VITE_API_URL;
 
-  const handleSearch = (event) => {
-    alert(`Searching for: ${searchQuery}`);
+  // console.log(apiUrl, apiKey);
 
+  useEffect(() => {
+    const loadPopularMovies = async () => {
+      try {
+        const popularMovies = await getPopularMovies();
+        setMovies(popularMovies);
+      } catch (error) {
+        console.error("Failed to load popular movies:", error);
+        setError("Failed to load popular movies");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPopularMovies();
+  }, []);
+
+  // const movies = [
+  //   {
+  //     id: 1,
+  //     title: "John 1",
+  //     release_date: "2023-01-01",
+  //     url: "https://example.com/movie1.jpg",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Movie 2",
+  //     release_date: "2023-02-01",
+  //     url: "https://example.com/movie2.jpg",
+  //   },
+  //   {
+  //     id: 3,
+  //     title: "Movie 3",
+  //     release_date: "2023-03-01",
+  //     url: "https://example.com/movie3.jpg",
+  //   },
+  // ];
+
+  const handleSearch = async (event) => {
     event.preventDefault(); // Prevents reloading the page after hitting submit
+    if (searchQuery.trim() === "") {
+      setError("Please enter a search query");
+      return;
+    }
+    if (loading) return; // Prevents multiple submissions while loading
+
+    setLoading(true);
+
+    try {
+      const searchResults = await searchMovies(searchQuery);
+      if (searchResults.length === 0) {
+        setError("No movies found");
+      } else {
+        setMovies(searchResults);
+        setError(null); // Clear any previous error
+      }
+    } catch (error) {
+      console.error("Error searching movies:", error);
+      setError("Failed to search movies");
+    } finally {
+      setLoading(false);
+    }
+
     setSearchQuery(""); // Clear the search input after submission
   };
 
@@ -47,15 +92,28 @@ const Home = () => {
           Search
         </button>
       </form>
-      <div className="movies-grid">
-        {movies.map(
-          (movie) =>
-            movie.title.toLowerCase().includes(searchQuery.toLowerCase()) && (
-              // movie.title.toLowerCase().startsWith(searchQuery) && (
-              <MovieCard key={movie.id} movie={movie} />
-            )
-        )}
-      </div>
+
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="loading">Loading...</div>
+      ) : (
+        <div className="movies-grid">
+          {movies.map(
+            (movie) =>
+              movie.title.toLowerCase().includes(searchQuery.toLowerCase()) && (
+                // movie.title.toLowerCase().startsWith(searchQuery) && (
+                <MovieCard key={movie.id} movie={movie} />
+              )
+          )}
+        </div>
+      )}
+
+      {/* Display the movies */}
     </div>
   );
 };
