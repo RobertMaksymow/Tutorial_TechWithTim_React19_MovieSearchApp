@@ -27,7 +27,8 @@ add screenshot<br>
 ### Interesting bits:
 
 - TMDB API used for this project https://developer.themoviedb.org
-- ...
+- useContext hook
+- localStorage to store favorites movies
 
 ### Technical bits:
 

@@ -7,7 +7,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-brand">
         <Link to="/" className="">
-          Movie App
+          MovieSearchApp
         </Link>
       </div>
       <div className="navbar-links">

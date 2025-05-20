@@ -1,10 +1,19 @@
 import React from "react";
 import "../css/MovieCard.css";
+import { useMovieContext } from "../contexts/MovieContext";
 
 const MovieCard = ({ movie }) => {
-  const handleFavoritesClick = () => {
+  const { addToFavorites, removeFromFavorites, isFavorite } = useMovieContext();
+  const isMovieFavorite = isFavorite(movie.id);
+
+  const handleFavoritesClick = (e) => {
     console.log("Movie clicked:", movie);
-    // Add your logic to handle the click event here
+    e.preventDefault();
+    if (isMovieFavorite) {
+      removeFromFavorites(movie.id);
+    } else {
+      addToFavorites(movie);
+    }
   };
   return (
     <div className="movie-card">
@@ -14,8 +23,11 @@ const MovieCard = ({ movie }) => {
           alt={movie.title}
         />
         <div className="movie-overlay">
-          <button className="favorite-btn" onClick={handleFavoritesClick}>
-            ♡
+          <button
+            className={`favorite-btn ${isMovieFavorite ? "active" : ""}`}
+            onClick={handleFavoritesClick}
+          >
+            ❤
           </button>
         </div>
       </div>
