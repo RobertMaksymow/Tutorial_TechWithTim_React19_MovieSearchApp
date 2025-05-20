@@ -29,30 +29,9 @@ const Home = () => {
     loadPopularMovies();
   }, []);
 
-  // const movies = [
-  //   {
-  //     id: 1,
-  //     title: "John 1",
-  //     release_date: "2023-01-01",
-  //     url: "https://example.com/movie1.jpg",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Movie 2",
-  //     release_date: "2023-02-01",
-  //     url: "https://example.com/movie2.jpg",
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Movie 3",
-  //     release_date: "2023-03-01",
-  //     url: "https://example.com/movie3.jpg",
-  //   },
-  // ];
-
   const handleSearch = async (event) => {
     event.preventDefault(); // Prevents reloading the page after hitting submit
-    if (searchQuery.trim() === "") {
+    if (!searchQuery.trim()) {
       setError("Please enter a search query");
       return;
     }
@@ -75,7 +54,7 @@ const Home = () => {
       setLoading(false);
     }
 
-    setSearchQuery(""); // Clear the search input after submission
+    // setSearchQuery(""); // Clear the search input after submission
   };
 
   return (
@@ -104,11 +83,13 @@ const Home = () => {
       ) : (
         <div className="movies-grid">
           {movies.map(
-            (movie) =>
-              movie.title.toLowerCase().includes(searchQuery.toLowerCase()) && (
-                // movie.title.toLowerCase().startsWith(searchQuery) && (
-                <MovieCard key={movie.id} movie={movie} />
-              )
+            (movie) => (
+              // NOTE: this starts filtering the movies (either by startsWith or includes) from the currently displayed movies, useful, but not in this case
+              // movie.title.toLowerCase().includes(searchQuery.toLowerCase()) && (
+              // movie.title.toLowerCase().startsWith(searchQuery) && (
+              <MovieCard key={movie.id} movie={movie} />
+            )
+            // )
           )}
         </div>
       )}
